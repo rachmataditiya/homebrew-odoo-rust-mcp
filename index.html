@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odoo Rust MCP - Homebrew Tap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent-orange: #f78166;
+            --accent-green: #3fb950;
+            --accent-blue: #58a6ff;
+            --accent-purple: #a371f7;
+            --border-color: #30363d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 4rem 0 3rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent-orange), #ff9a56);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-orange), #ff9a56);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .badge:hover {
+            border-color: var(--accent-orange);
+            color: var(--text-primary);
+        }
+        
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+        
+        /* Quick Start */
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Code blocks */
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .code-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent-orange);
+        }
+        
+        .copy-btn.copied {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+        
+        .code-content {
+            padding: 1rem 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+        
+        .code-content code {
+            color: var(--text-primary);
+        }
+        
+        .code-comment {
+            color: var(--text-secondary);
+        }
+        
+        .code-command {
+            color: var(--accent-green);
+        }
+        
+        /* Steps */
+        .steps {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .step {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        td {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+        }
+        
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .card:hover {
+            border-color: var(--accent-blue);
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Links */
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 2rem 0;
+            }
+            
+            .logo-text {
+                font-size: 1.75rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🍺</div>
+                <span class="logo-text">Odoo Rust MCP</span>
+            </div>
+            <p class="tagline">Homebrew Tap for Odoo MCP Server</p>
+            <div class="badges">
+                <a href="https://github.com/rachmataditiya/odoo-rust-mcp/releases" class="badge">
+                    <span class="badge-dot"></span>
+                    v0.2.2
+                </a>
+                <a href="https://github.com/rachmataditiya/odoo-rust-mcp" class="badge">
+                    GitHub
+                </a>
+                <a href="https://rachmataditiya.github.io/odoo-rust-mcp/" class="badge">
+                    APT Repository
+                </a>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">⚡</span>
+                Quick Start
+            </h2>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'brew tap rachmataditiya/odoo-rust-mcp && brew install rust-mcp')">Copy</button>
+                </div>
+                <div class="code-content">
+                    <code><span class="code-comment"># Install in one command</span>
+<span class="code-command">brew tap</span> rachmataditiya/odoo-rust-mcp && <span class="code-command">brew install</span> rust-mcp</code>
+                </div>
+            </div>
+            
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Or install directly:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this, 'brew install rachmataditiya/odoo-rust-mcp/rust-mcp')">Copy</button>
+                </div>
+                <div class="code-content">
+                    <code><span class="code-command">brew install</span> rachmataditiya/odoo-rust-mcp/rust-mcp</code>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🚀</span>
+                Getting Started
+            </h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Install the package</div>
+                        <div class="step-desc">Run the brew install command above</div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Configure your Odoo credentials</div>
+                        <div class="step-desc">Edit the env file with your Odoo URL, database, and API key</div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">Terminal</span>
+                                <button class="copy-btn" onclick="copyCode(this, 'nano ~/.config/odoo-rust-mcp/env')">Copy</button>
+                            </div>
+                            <div class="code-content">
+                                <code><span class="code-command">nano</span> ~/.config/odoo-rust-mcp/env</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Start the service</div>
+                        <div class="step-desc">Run as a background service with brew services</div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">Terminal</span>
+                                <button class="copy-btn" onclick="copyCode(this, 'brew services start rust-mcp')">Copy</button>
+                            </div>
+                            <div class="code-content">
+                                <code><span class="code-command">brew services start</span> rust-mcp</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">📁</span>
+                What Gets Installed
+            </h2>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Binary</td>
+                            <td>/opt/homebrew/bin/rust-mcp</td>
+                        </tr>
+                        <tr>
+                            <td>Service wrapper</td>
+                            <td>/opt/homebrew/bin/rust-mcp-service</td>
+                        </tr>
+                        <tr>
+                            <td>Default configs</td>
+                            <td>/opt/homebrew/share/odoo-rust-mcp/</td>
+                        </tr>
+                        <tr>
+                            <td>User configs</td>
+                            <td>~/.config/odoo-rust-mcp/</td>
+                        </tr>
+                        <tr>
+                            <td>Service logs</td>
+                            <td>/opt/homebrew/var/log/rust-mcp.log</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">⚙️</span>
+                Configuration
+            </h2>
+            
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">🔑</div>
+                    <div class="card-title">Odoo 19+ (API Key)</div>
+                    <div class="card-desc">
+                        Set ODOO_URL, ODOO_DB, and ODOO_API_KEY in your env file
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">👤</div>
+                    <div class="card-title">Odoo &lt; 19 (Password)</div>
+                    <div class="card-desc">
+                        Set ODOO_URL, ODOO_DB, ODOO_VERSION, ODOO_USERNAME, and ODOO_PASSWORD
+                    </div>
+                </div>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">~/.config/odoo-rust-mcp/env</span>
+                </div>
+                <div class="code-content">
+                    <code><span class="code-comment"># Odoo 19+ (API Key authentication)</span>
+ODOO_URL=https://mycompany.odoo.com
+ODOO_DB=mydb
+ODOO_API_KEY=your_api_key_here
+
+<span class="code-comment"># Optional: MCP Authentication for HTTP transport</span>
+<span class="code-comment"># MCP_AUTH_TOKEN=your-secure-token</span></code>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🖥️</span>
+                Cursor IDE Configuration
+            </h2>
+            
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Add to <code>~/.cursor/mcp.json</code>:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Using HTTP (when service is running)</span>
+                    <button class="copy-btn" onclick="copyCode(this, '{&quot;mcpServers&quot;:{&quot;odoo&quot;:{&quot;url&quot;:&quot;http://127.0.0.1:8787/mcp&quot;}}}')">Copy</button>
+                </div>
+                <div class="code-content">
+                    <code>{
+  "mcpServers": {
+    "odoo": {
+      "url": "http://127.0.0.1:8787/mcp"
+    }
+  }
+}</code>
+                </div>
+            </div>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Using stdio (direct)</span>
+                </div>
+                <div class="code-content">
+                    <code>{
+  "mcpServers": {
+    "odoo": {
+      "command": "/opt/homebrew/bin/rust-mcp-service",
+      "args": ["--transport", "stdio"]
+    }
+  }
+}</code>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🛠️</span>
+                Service Commands
+            </h2>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Managing the service</span>
+                </div>
+                <div class="code-content">
+                    <code><span class="code-comment"># Start service</span>
+<span class="code-command">brew services start</span> rust-mcp
+
+<span class="code-comment"># Stop service</span>
+<span class="code-command">brew services stop</span> rust-mcp
+
+<span class="code-comment"># Restart after config changes</span>
+<span class="code-command">brew services restart</span> rust-mcp
+
+<span class="code-comment"># Check status</span>
+<span class="code-command">brew services list</span>
+
+<span class="code-comment"># View logs</span>
+<span class="code-command">tail -f</span> /opt/homebrew/var/log/rust-mcp.log</code>
+                </div>
+            </div>
+            
+            <p style="color: var(--text-secondary);">Service endpoint: <code>http://127.0.0.1:8787/mcp</code></p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🗑️</span>
+                Uninstall
+            </h2>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Terminal</span>
+                </div>
+                <div class="code-content">
+                    <code><span class="code-comment"># Stop service first</span>
+<span class="code-command">brew services stop</span> rust-mcp
+
+<span class="code-comment"># Uninstall</span>
+<span class="code-command">brew uninstall</span> rust-mcp
+
+<span class="code-comment"># Remove tap (optional)</span>
+<span class="code-command">brew untap</span> rachmataditiya/odoo-rust-mcp
+
+<span class="code-comment"># Remove config files (optional)</span>
+<span class="code-command">rm -rf</span> ~/.config/odoo-rust-mcp</code>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://github.com/rachmataditiya/odoo-rust-mcp">Main Repository</a>
+                <a href="https://github.com/rachmataditiya/homebrew-odoo-rust-mcp">Homebrew Tap</a>
+                <a href="https://github.com/rachmataditiya/odoo-rust-mcp/issues">Report Issues</a>
+            </div>
+            <p>Released under the MIT License</p>
+        </footer>
+    </div>
+
+    <script>
+        function copyCode(btn, code) {
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
