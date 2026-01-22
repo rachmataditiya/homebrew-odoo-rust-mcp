@@ -85,7 +85,7 @@ ENVEOF
       exec "#{opt_bin}/rust-mcp" "$@"
     EOS
     # Ensure executable permission is set correctly
-    FileUtils.chmod 0755, wrapper_script
+    system "chmod", "+x", wrapper_script
   end
 
   # Service configuration for `brew services start rust-mcp`
