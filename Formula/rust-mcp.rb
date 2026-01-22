@@ -7,19 +7,19 @@ class RustMcp < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-aarch64-apple-darwin.tar.gz"
-      sha256 "dfbc02b8ea02bd2ca585e984008691555e5c87aa8202090057fa1974c77a1ac4"
+      sha256 "10f0d6020a46ec8bc7f033cefab0f429b8444b24313bed0bddbd741e1043bfec"
     end
 
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-apple-darwin.tar.gz"
-      sha256 "a79b086ba7a5e5917e797391ad18785dcb432085c2283652a6efd30d273978a6"
+      sha256 "ded0d2b223275243d9c2ef123ebea0d1ab7f1125cd7efd3454e97ae640144b63"
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "6934407c1d2ff4c691cd45f4c8316c9d739dc8387256758e47f625d40a534ceb"
+      sha256 "29bab1bc94d47e73eab64bb05a26136442ad0af9dad9bb54bd3a3663b2b08714"
     end
   end
 
@@ -30,10 +30,8 @@ class RustMcp < Formula
     # Install example env file
     (share/"odoo-rust-mcp").install ".env.example" if File.exist?(".env.example")
 
-    # Create wrapper script that loads env file before running
-    # Also creates config dir if it doesn't exist (fallback for post_install)
-    wrapper_script = bin/"rust-mcp-service"
-    wrapper_script.write <<~EOS
+    # Create wrapper script content
+    wrapper_content = <<~EOS
       #!/bin/bash
       CONFIG_DIR="$HOME/.config/odoo-rust-mcp"
       
@@ -84,8 +82,11 @@ ENVEOF
       
       exec "#{opt_bin}/rust-mcp" "$@"
     EOS
-    # Ensure executable permission is set correctly
-    wrapper_script.chmod 0755
+
+    # Write to libexec first, then install to bin (preserves executable)
+    (libexec/"rust-mcp-service").write wrapper_content
+    (libexec/"rust-mcp-service").chmod 0755
+    bin.install_symlink libexec/"rust-mcp-service"
   end
 
   # Service configuration for `brew services start rust-mcp`

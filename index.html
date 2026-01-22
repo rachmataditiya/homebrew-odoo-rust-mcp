@@ -567,18 +567,23 @@ ODOO_API_KEY=your_api_key_here
             
             <div class="code-block">
                 <div class="code-header">
-                    <span class="code-title">Using stdio (direct)</span>
+                    <span class="code-title">Using stdio (recommended for Cursor/Claude Desktop/Windsurf)</span>
                 </div>
                 <div class="code-content">
                     <code>{
   "mcpServers": {
     "odoo": {
-      "command": "/opt/homebrew/bin/rust-mcp-service",
+      "command": "/opt/homebrew/bin/rust-mcp",
       "args": ["--transport", "stdio"]
     }
   }
 }</code>
                 </div>
+            </div>
+            
+            <div class="note" style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-green);">
+                <strong style="color: var(--accent-green);">v0.2.4+:</strong> The binary now automatically loads config from <code>~/.config/odoo-rust-mcp/env</code>. 
+                You can use <code>rust-mcp</code> directly (no shell wrapper needed). This ensures compatibility with all MCP clients including Windsurf.
             </div>
         </section>
 
