@@ -30,10 +30,8 @@ class RustMcp < Formula
     # Install example env file
     (share/"odoo-rust-mcp").install ".env.example" if File.exist?(".env.example")
 
-    # Create wrapper script that loads env file before running
-    # Also creates config dir if it doesn't exist (fallback for post_install)
-    wrapper_script = bin/"rust-mcp-service"
-    wrapper_script.write <<~EOS
+    # Create wrapper script content
+    wrapper_content = <<~EOS
       #!/bin/bash
       CONFIG_DIR="$HOME/.config/odoo-rust-mcp"
       
@@ -84,8 +82,11 @@ ENVEOF
       
       exec "#{opt_bin}/rust-mcp" "$@"
     EOS
-    # Ensure executable permission is set correctly
-    system "chmod", "+x", wrapper_script
+
+    # Write to libexec first, then install to bin (preserves executable)
+    (libexec/"rust-mcp-service").write wrapper_content
+    (libexec/"rust-mcp-service").chmod 0755
+    bin.install_symlink libexec/"rust-mcp-service"
   end
 
   # Service configuration for `brew services start rust-mcp`
