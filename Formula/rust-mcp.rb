@@ -27,6 +27,19 @@ class RustMcp < Formula
     bin.install "rust-mcp"
     # Install config files to share directory
     (share/"odoo-rust-mcp").install Dir["config/*"] if Dir.exist?("config")
+    # Install example env file
+    (share/"odoo-rust-mcp").install ".env.example" if File.exist?(".env.example")
+  end
+
+  # Service configuration for `brew services start rust-mcp`
+  service do
+    run [opt_bin/"rust-mcp", "--transport", "http", "--listen", "127.0.0.1:8787"]
+    keep_alive true
+    log_path var/"log/rust-mcp.log"
+    error_log_path var/"log/rust-mcp.log"
+    environment_variables MCP_TOOLS_JSON: "#{HOMEBREW_PREFIX}/share/odoo-rust-mcp/tools.json",
+                          MCP_PROMPTS_JSON: "#{HOMEBREW_PREFIX}/share/odoo-rust-mcp/prompts.json",
+                          MCP_SERVER_JSON: "#{HOMEBREW_PREFIX}/share/odoo-rust-mcp/server.json"
   end
 
   def caveats
@@ -37,9 +50,22 @@ class RustMcp < Formula
         Run directly (stdio):  rust-mcp --transport stdio
         Run as HTTP server:    rust-mcp --transport http --listen 127.0.0.1:8787
 
+      Run as a background service:
+        brew services start rust-mcp
+
       Set environment variables for Odoo connection:
         ODOO_URL, ODOO_DB, ODOO_API_KEY (Odoo 19+)
         or ODOO_USERNAME, ODOO_PASSWORD, ODOO_VERSION (Odoo < 19)
+
+      For the service, create ~/.config/odoo-rust-mcp/env with your Odoo credentials:
+        ODOO_URL=http://localhost:8069
+        ODOO_DB=mydb
+        ODOO_API_KEY=your_api_key
+
+      Then restart the service: brew services restart rust-mcp
+
+      Service endpoint: http://127.0.0.1:8787/mcp
+      Service logs: #{var}/log/rust-mcp.log
 
       Example configuration for Cursor IDE:
         See: https://github.com/rachmataditiya/odoo-rust-mcp#readme
