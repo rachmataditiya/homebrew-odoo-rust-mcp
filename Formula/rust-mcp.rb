@@ -90,8 +90,9 @@ ENVEOF
   end
 
   # Service configuration for `brew services start rust-mcp`
+  # Uses binary directly (v0.2.4+ auto-loads config from ~/.config/odoo-rust-mcp/env)
   service do
-    run [opt_bin/"rust-mcp-service", "--transport", "http", "--listen", "127.0.0.1:8787"]
+    run [opt_bin/"rust-mcp", "--transport", "http", "--listen", "127.0.0.1:8787"]
     keep_alive true
     log_path var/"log/rust-mcp.log"
     error_log_path var/"log/rust-mcp.log"
@@ -102,10 +103,10 @@ ENVEOF
       Configuration directory: ~/.config/odoo-rust-mcp/
       
       The config directory and default env file will be automatically created
-      the first time you run 'rust-mcp-service'.
+      the first time you run 'rust-mcp'.
       
       Quick start:
-        1. Run once to create config: rust-mcp-service --help
+        1. Run once to create config: rust-mcp --help
         2. Edit credentials: nano ~/.config/odoo-rust-mcp/env
         3. Start service: brew services start rust-mcp
 
