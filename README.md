@@ -149,6 +149,23 @@ Add to `~/.cursor/mcp.json`:
 }
 ```
 
+**Using HTTP with Bearer Token Authentication:**
+
+If you have `MCP_AUTH_TOKEN` configured in your env file:
+
+```json
+{
+  "mcpServers": {
+    "odoo": {
+      "url": "http://127.0.0.1:8787/mcp",
+      "headers": {
+        "Authorization": "Bearer your-secure-random-token-here"
+      }
+    }
+  }
+}
+```
+
 **Using stdio (direct):**
 
 ```json
