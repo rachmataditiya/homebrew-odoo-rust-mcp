@@ -1,25 +1,25 @@
 class RustMcp < Formula
   desc "Odoo MCP Server - Model Context Protocol server for Odoo integration"
   homepage "https://github.com/rachmataditiya/odoo-rust-mcp"
-  version "0.2.3"
+  version "0.2.4"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-aarch64-apple-darwin.tar.gz"
-      sha256 "1eb9fb5dced970914dc7a390226574b0a77094e99d1d84b9cb06aa2619ede8a6"
+      sha256 "dfbc02b8ea02bd2ca585e984008691555e5c87aa8202090057fa1974c77a1ac4"
     end
 
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-apple-darwin.tar.gz"
-      sha256 "dbbe1d93620b94e17375b94b9d935041fea7f3f0f7775c17f81be6b948dfa639"
+      sha256 "a79b086ba7a5e5917e797391ad18785dcb432085c2283652a6efd30d273978a6"
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "7df460466fe92c933145df01117fadf67a57dd0eb9f1f64f1b03dfaab18ec78d"
+      sha256 "6934407c1d2ff4c691cd45f4c8316c9d739dc8387256758e47f625d40a534ceb"
     end
   end
 
@@ -30,8 +30,10 @@ class RustMcp < Formula
     # Install example env file
     (share/"odoo-rust-mcp").install ".env.example" if File.exist?(".env.example")
 
-    # Create wrapper script content
-    wrapper_content = <<~EOS
+    # Create wrapper script that loads env file before running
+    # Also creates config dir if it doesn't exist (fallback for post_install)
+    wrapper_script = bin/"rust-mcp-service"
+    wrapper_script.write <<~EOS
       #!/bin/bash
       CONFIG_DIR="$HOME/.config/odoo-rust-mcp"
       
@@ -82,11 +84,8 @@ ENVEOF
       
       exec "#{opt_bin}/rust-mcp" "$@"
     EOS
-
-    # Write to libexec first, then install to bin (preserves executable)
-    (libexec/"rust-mcp-service").write wrapper_content
-    (libexec/"rust-mcp-service").chmod 0755
-    bin.install_symlink libexec/"rust-mcp-service"
+    # Ensure executable permission is set correctly
+    wrapper_script.chmod 0755
   end
 
   # Service configuration for `brew services start rust-mcp`
