@@ -582,8 +582,10 @@ ODOO_API_KEY=your_api_key_here
             </div>
             
             <div class="note" style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-green);">
-                <strong style="color: var(--accent-green);">v0.2.4+:</strong> The binary now automatically loads config from <code>~/.config/odoo-rust-mcp/env</code>. 
+                <strong style="color: var(--accent-green);">v0.2.5+:</strong> The binary automatically loads config from <code>~/.config/odoo-rust-mcp/env</code>. 
                 You can use <code>rust-mcp</code> directly (no shell wrapper needed). This ensures compatibility with all MCP clients including Windsurf.
+                <br><br>
+                <strong>Multi-instance support:</strong> Use <code>ODOO_INSTANCES_JSON</code> env var pointing to a JSON file for readable multi-instance configuration.
             </div>
         </section>
 
