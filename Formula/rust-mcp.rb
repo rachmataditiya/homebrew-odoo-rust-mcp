@@ -89,8 +89,10 @@ ENVEOF
   end
 
   # Service configuration for `brew services start rust-mcp`
+  # Service uses binary directly (v0.2.5+ auto-loads config)
+  # Supports ODOO_INSTANCES_JSON file for readable multi-instance config
   service do
-    run [opt_bin/"rust-mcp-service", "--transport", "http", "--listen", "127.0.0.1:8787"]
+    run [opt_bin/"rust-mcp", "--transport", "http", "--listen", "127.0.0.1:8787"]
     keep_alive true
     log_path var/"log/rust-mcp.log"
     error_log_path var/"log/rust-mcp.log"
