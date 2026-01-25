@@ -1,25 +1,25 @@
 class RustMcp < Formula
   desc "Odoo MCP Server - Model Context Protocol server for Odoo integration"
   homepage "https://github.com/rachmataditiya/odoo-rust-mcp"
-  version "0.2.17"
+  version "0.3.0"
   license "AGPL-3.0-only"
 
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-aarch64-apple-darwin.tar.gz"
-      sha256 "0da4725165e5ecaf4486157f5cd7559f5c1caeeb08875a05edb24ff2ceb58fed"  # macos-arm64
+      sha256 "5a33604a106970f22e43a3654bdb44b10b0cb700c26b6ec6362a3767a9beeec1"  # macos-arm64
     end
 
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-apple-darwin.tar.gz"
-      sha256 "45a7347c0e53f033416c73f9fc6eef88f6a52fdb57caf015ec31f4037f3b339c"  # macos-x64
+      sha256 "010b80b628805ffea5986c364eaa8d22f0c21c13e32540332a75dd769ef0f25d"  # macos-x64
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "2e3240aab0a4d4d1f5160f175348f50478cec9c953681174e1bbe6a300e48b09"  # linux-x64
+      sha256 "b84b6a939a6d76eb2ab9a58c7fe711300db70e31da6239f9435c577d19f0bb27"  # linux-x64
     end
   end
 
