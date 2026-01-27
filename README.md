@@ -50,11 +50,19 @@ Created automatically on first install:
 
 ```
 ~/.config/odoo-rust-mcp/
-├── env              # Environment variables (Odoo credentials) - EDIT THIS
+├── env              # Environment variables (Odoo credentials, auth settings) - EDIT THIS
+├── instances.json   # Multi-instance Odoo configuration (default setup)
 ├── tools.json       # MCP tools definition
 ├── prompts.json     # MCP prompts definition
 └── server.json      # MCP server metadata
 ```
+
+**Note:** Starting from v0.3.0+, the following environment variables are automatically set:
+- `MCP_TOOLS_JSON` - Points to `~/.config/odoo-rust-mcp/tools.json`
+- `MCP_PROMPTS_JSON` - Points to `~/.config/odoo-rust-mcp/prompts.json`
+- `MCP_SERVER_JSON` - Points to `~/.config/odoo-rust-mcp/server.json`
+
+Default config files are automatically copied from Homebrew share directory if they don't exist.
 
 ## Configuration
 
@@ -90,6 +98,15 @@ ODOO_PASSWORD=your_password
 
 ### Step 3: (Optional) Enable HTTP Authentication
 
+**Option 1: Via Config UI (Recommended)**
+1. Start the service: `brew services start rust-mcp`
+2. Open `http://localhost:3008` and login (default: `admin` / `changeme`)
+3. Go to **Security** tab
+4. Toggle **Enable MCP HTTP Authentication**
+5. Click **Generate New Token** (or paste existing token)
+6. Changes apply immediately (no restart needed)
+
+**Option 2: Via Environment Variables**
 For production, add a secure token:
 
 ```bash
@@ -97,7 +114,31 @@ For production, add a secure token:
 openssl rand -hex 32
 
 # Add to ~/.config/odoo-rust-mcp/env
+MCP_AUTH_ENABLED=true
 MCP_AUTH_TOKEN=your_generated_token_here
+```
+
+Then restart the service:
+```bash
+brew services restart rust-mcp
+```
+
+### Step 4: Config UI Authentication
+
+The Config UI requires login credentials. Default credentials are:
+- Username: `admin`
+- Password: `changeme`
+
+**IMPORTANT:** Change the default password immediately after first login:
+1. Open `http://localhost:3008`
+2. Login with default credentials
+3. Go to **Security** tab
+4. Update username and/or password
+
+Credentials are stored in `~/.config/odoo-rust-mcp/env`:
+```bash
+CONFIG_UI_USERNAME=admin
+CONFIG_UI_PASSWORD=your-secure-password
 ```
 
 ## Running the Server
@@ -121,7 +162,9 @@ brew services stop rust-mcp
 brew services restart rust-mcp
 ```
 
-Service runs on: `http://127.0.0.1:8787/mcp`
+Service runs on:
+- MCP Server: `http://127.0.0.1:8787/mcp`
+- Config UI: `http://127.0.0.1:3008` (login required)
 
 ### Option B: Run Manually
 
@@ -144,6 +187,21 @@ Add to `~/.cursor/mcp.json`:
   "mcpServers": {
     "odoo": {
       "url": "http://127.0.0.1:8787/mcp"
+    }
+  }
+}
+```
+
+**Using HTTP with Bearer Token (if MCP auth is enabled):**
+
+```json
+{
+  "mcpServers": {
+    "odoo": {
+      "url": "http://127.0.0.1:8787/mcp",
+      "headers": {
+        "Authorization": "Bearer your-secure-random-token-here"
+      }
     }
   }
 }
