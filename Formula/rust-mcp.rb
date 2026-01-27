@@ -1,25 +1,25 @@
 class RustMcp < Formula
   desc "Odoo MCP Server - Model Context Protocol server for Odoo integration"
   homepage "https://github.com/rachmataditiya/odoo-rust-mcp"
-  version "0.3.26"
+  version "0.3.27"
   license "AGPL-3.0-only"
 
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-aarch64-apple-darwin.tar.gz"
-      sha256 "e45b6b68a4730fa866f90f5345725a69bbe3034041293f0a1f734c93c2000d71"  # macos-arm64
+      sha256 "463eb4a62bb8a51d2432dc6fa26a66f2c4ca1c21192afeb5a8e8644cb8e658b5"  # macos-arm64
     end
 
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-apple-darwin.tar.gz"
-      sha256 "95cebadf0d0b4a27c07727abeeda9034ec6310e5d49ccaea7d9ecd30b18d345f"  # macos-x64
+      sha256 "b4941498ea268e3016bc2477cde9f974d4380c3f7078d60e223a87599ab865de"  # macos-x64
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "9bfc645859ca64f4a97781e788fa3ed5dbec23982a45eb6811396abbae2ee7c2"  # linux-x64
+      sha256 "e44aa9c0ee0bc292f0122b98612851a21f6415fccc39505482cbab37cb9ab0fb"  # linux-x64
     end
   end
 
@@ -77,7 +77,7 @@ INSTANCESEOF
       
       # Create default env file if it doesn't exist
       if [ ! -f "$CONFIG_DIR/env" ]; then
-        cat > "$CONFIG_DIR/env" << 'ENVEOF'
+        cat > "$CONFIG_DIR/env" << ENVEOF
 # Odoo Rust MCP Server Configuration
 # Edit this file with your settings
 
@@ -85,7 +85,7 @@ INSTANCESEOF
 # Multi-Instance Configuration (Default - Recommended)
 # =============================================================================
 # Uses instances.json for multiple Odoo instances
-ODOO_INSTANCES_JSON=$HOME/.config/odoo-rust-mcp/instances.json
+ODOO_INSTANCES_JSON=$CONFIG_DIR/instances.json
 
 # =============================================================================
 # Single Instance Configuration (Alternative - uncomment if not using multi-instance)
@@ -115,9 +115,42 @@ CONFIG_UI_PASSWORD=changeme
 MCP_AUTH_ENABLED=false
 # Generate a secure token: openssl rand -hex 32
 # MCP_AUTH_TOKEN=your-secure-random-token-here
+
+# =============================================================================
+# MCP Config Paths
+# =============================================================================
+# Path to MCP configuration files (tools, prompts, server settings)
+MCP_TOOLS_JSON=$CONFIG_DIR/tools.json
+MCP_PROMPTS_JSON=$CONFIG_DIR/prompts.json
+MCP_SERVER_JSON=$CONFIG_DIR/server.json
 ENVEOF
         chmod 600 "$CONFIG_DIR/env"
         echo "Created default env file: $CONFIG_DIR/env"
+      fi
+      
+      # Copy default config files to user directory if they don't exist
+      SHARE_DIR="#{HOMEBREW_PREFIX}/share/odoo-rust-mcp"
+      for config_file in tools.json prompts.json server.json; do
+        if [ ! -f "$CONFIG_DIR/$config_file" ] && [ -f "$SHARE_DIR/$config_file" ]; then
+          cp "$SHARE_DIR/$config_file" "$CONFIG_DIR/$config_file"
+          chmod 600 "$CONFIG_DIR/$config_file"
+          echo "Copied default $config_file to: $CONFIG_DIR/$config_file"
+        fi
+      done
+      
+      # Migrate existing env file: add MCP config paths if missing (upgrade support)
+      if [ -f "$CONFIG_DIR/env" ] && ! grep -q "MCP_TOOLS_JSON" "$CONFIG_DIR/env"; then
+        cat >> "$CONFIG_DIR/env" << MIGRATEEOF
+
+# =============================================================================
+# MCP Config Paths (added in v0.3.27)
+# =============================================================================
+# Path to MCP configuration files (tools, prompts, server settings)
+MCP_TOOLS_JSON=$CONFIG_DIR/tools.json
+MCP_PROMPTS_JSON=$CONFIG_DIR/prompts.json
+MCP_SERVER_JSON=$CONFIG_DIR/server.json
+MIGRATEEOF
+        echo "Migration: Added MCP config paths to env file"
       fi
       
       # Load environment from user config if exists
@@ -127,10 +160,10 @@ ENVEOF
         set +a
       fi
       
-      # Set default MCP config paths to Homebrew share if not already set
-      export MCP_TOOLS_JSON="${MCP_TOOLS_JSON:-#{HOMEBREW_PREFIX}/share/odoo-rust-mcp/tools.json}"
-      export MCP_PROMPTS_JSON="${MCP_PROMPTS_JSON:-#{HOMEBREW_PREFIX}/share/odoo-rust-mcp/prompts.json}"
-      export MCP_SERVER_JSON="${MCP_SERVER_JSON:-#{HOMEBREW_PREFIX}/share/odoo-rust-mcp/server.json}"
+      # Set default MCP config paths to user config dir (fallback to share dir)
+      export MCP_TOOLS_JSON="${MCP_TOOLS_JSON:-$CONFIG_DIR/tools.json}"
+      export MCP_PROMPTS_JSON="${MCP_PROMPTS_JSON:-$CONFIG_DIR/prompts.json}"
+      export MCP_SERVER_JSON="${MCP_SERVER_JSON:-$CONFIG_DIR/server.json}"
       
       # Set default instances.json path if not already set
       export ODOO_INSTANCES_JSON="${ODOO_INSTANCES_JSON:-$CONFIG_DIR/instances.json}"
