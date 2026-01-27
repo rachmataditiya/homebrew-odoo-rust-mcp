@@ -1,25 +1,25 @@
 class RustMcp < Formula
   desc "Odoo MCP Server - Model Context Protocol server for Odoo integration"
   homepage "https://github.com/rachmataditiya/odoo-rust-mcp"
-  version "0.3.23"
+  version "0.3.24"
   license "AGPL-3.0-only"
 
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-aarch64-apple-darwin.tar.gz"
-      sha256 "7376961ca28eea9ddaa252056b9e1fe3ede51c83dfea1d6dfd60b5483a021d7f"  # macos-arm64
+      sha256 "d39a32ce98c6f70cf0feccbddce9be7e3f83893b3404c8219305033f75ffe447"  # macos-arm64
     end
 
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-apple-darwin.tar.gz"
-      sha256 "364b29dd2f28d40e055718c02cd3f22d9b2f1f18925352a89f0da64efc66917b"  # macos-x64
+      sha256 "d3355ce6c491453b6ff92928d1dfb438b68fb43ed0e3b0b73c282011113be38e"  # macos-x64
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/rachmataditiya/odoo-rust-mcp/releases/download/v#{version}/rust-mcp-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "2eb57ed4a2381c70a58e358c80822e6032bc831d4c7941117e846b241ac253f9"  # linux-x64
+      sha256 "b585ef01f3e7879ab1f4b50c5115a9f3b747a7a55263ef0521d6cd69e0cb6308"  # linux-x64
     end
   end
 
@@ -100,7 +100,19 @@ ODOO_INSTANCES_JSON=$HOME/.config/odoo-rust-mcp/instances.json
 # # ODOO_USERNAME=admin
 # # ODOO_PASSWORD=admin
 
-# MCP Authentication (HTTP transport)
+# =============================================================================
+# Config UI Authentication
+# =============================================================================
+# Login credentials for the config web UI
+# IMPORTANT: Change these default credentials!
+CONFIG_UI_USERNAME=admin
+CONFIG_UI_PASSWORD=changeme
+
+# =============================================================================
+# MCP HTTP Transport Authentication
+# =============================================================================
+# Enable/disable HTTP authentication (default: false)
+MCP_AUTH_ENABLED=false
 # Generate a secure token: openssl rand -hex 32
 # MCP_AUTH_TOKEN=your-secure-random-token-here
 ENVEOF
